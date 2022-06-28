@@ -7,111 +7,65 @@
 
 import UIKit
 
-enum DrawMethod {
-    case circle
-    case rectangle
-    case line
-    case triangle
-    case pencil
-}
-
-struct TouchPointAndColor {
-    var color: UIColor
-    var points: [(CGPoint, CGPoint)]
-    var method: DrawMethod
-    var isFilled: Bool
-}
-
 class CanvasView: UIView {
-    
-    var lines = [TouchPointAndColor]()
+    private var shapes = [ShapeViewModel]()
     var strokeColor: UIColor = .black
-    var method: DrawMethod = .pencil
+    var shapeType: ShapeType = .pencil
     var isFilled: Bool = false
     
     override func draw(_ rect: CGRect) {
-        lines.forEach { line in
-            line.color.setStroke()
-            line.points.forEach { first, last in
-                var path = UIBezierPath()
+        shapes.forEach { shape in
+            shape.color.setStroke()
+            shape.points.forEach { first, last in
+                let factory = shape.type.factory
                 
-                switch line.method {
-                case .pencil: drawLine(first: first, last: last, path: &path)
-                case .line: drawLine(first: first, last: last, path: &path)
-                case .circle: drawCircle(first: first, last: last, path: &path)
-                case .triangle: drawTriangle(first: first, last: last, path: &path)
-                case .rectangle: drawRectangle(first: first, last: last, path: &path)
-                }
+                let configuration = ShapeConfiguration(
+                    startPoint: first,
+                    endPoint: last,
+                    isFilled: shape.isFilled,
+                    color: shape.color
+                )
                 
-                if line.isFilled {
-                    line.color.setFill()
-                    path.fill()
-                }
-                
-                path.lineWidth = 2
+                let path = factory.create(configuration: configuration)
                 path.stroke()
             }
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard var first = touches.first?.location(in: nil) else { return }
-        first.y -= 100
-
-        lines.append(TouchPointAndColor(color: strokeColor, points: [(first, CGPoint())], method: method, isFilled: isFilled))
+        guard let first = touches.first?.location(in: self) else { return }
+        let viewModel = ShapeViewModel(
+            color: strokeColor,
+            points: [(first, CGPoint())],
+            type: shapeType,
+            isFilled: isFilled
+        )
+        shapes.append(viewModel)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard var touch = touches.first?.location(in: nil) else { return }
-        touch.y -= 100
-        
-        guard var lastPoint = lines.popLast() else { return }
+        guard let last = touches.first?.location(in: self) else { return }
+    
+        guard var lastPoint = shapes.popLast() else { return }
         guard var endPoint = lastPoint.points.popLast() else { return }
-        endPoint.1 = touch
+        endPoint.toPoint = last
         lastPoint.points.append(endPoint)
 
-        if lastPoint.method == .pencil {
-            lastPoint.points.append((touch, touch))
+        if lastPoint.type == .pencil {
+            lastPoint.points.append((last, last))
         }
-        lines.append(lastPoint)
+        shapes.append(lastPoint)
         setNeedsDisplay()
     }
     
-    func drawLine(first: CGPoint, last: CGPoint, path: inout UIBezierPath) {
-        path.move(to: first)
-        path.addLine(to: last)
-    }
-    
-    func drawRectangle(first: CGPoint, last: CGPoint, path: inout UIBezierPath) {
-        path.move(to: first)
-        path.addLine(to: CGPoint(x: last.x, y: first.y))
-        path.addLine(to: last)
-        path.addLine(to: CGPoint(x: first.x, y: last.y))
-        path.addLine(to: first)
-    }
-    
-    func drawTriangle(first: CGPoint, last: CGPoint, path: inout UIBezierPath) {
-        path.move(to: first)
-        path.addLine(to: CGPoint(x: first.x, y: last.y))
-        path.addLine(to: last)
-        path.close()
-    }
-    
-    func drawCircle(first: CGPoint, last: CGPoint, path: inout UIBezierPath ) {
-        path = UIBezierPath(ovalIn: CGRect(x: first.x,
-                                           y: first.y,
-                                           width: last.x - first.x,
-                                           height: last.y - first.y))
-    }
-    
     func clearCanvasView() {
-        lines.removeAll()
+        shapes.removeAll()
         setNeedsDisplay()
     }
     
     func undoDraw() {
-        if lines.count > 0 {
-            lines.removeLast()
+        if shapes.count > 0 {
+            shapes.removeLast()
             setNeedsDisplay()
         }
     }

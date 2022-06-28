@@ -8,7 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		314E93772859DB0B00FC98CC /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 314E93762859DB0B00FC98CC /* CanvasView.swift */; };
-		31667B6228588BE800B7AB2E /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31667B6128588BE800B7AB2E /* ColorCell.swift */; };
+		31E8C617286ACCB800D36889 /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C616286ACCB800D36889 /* ColorCell.swift */; };
+		31E8C619286ACD9000D36889 /* Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C618286ACD9000D36889 /* Shape.swift */; };
+		31E8C61B286AD34D00D36889 /* ShapeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C61A286AD34D00D36889 /* ShapeFactory.swift */; };
+		31E8C61E286AD4D300D36889 /* LineFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C61D286AD4D300D36889 /* LineFactory.swift */; };
+		31E8C620286AD51400D36889 /* RectangleFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C61F286AD51400D36889 /* RectangleFactory.swift */; };
+		31E8C622286AD64900D36889 /* TriangleFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C621286AD64900D36889 /* TriangleFactory.swift */; };
+		31E8C624286AD70E00D36889 /* CircleFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E8C623286AD70E00D36889 /* CircleFactory.swift */; };
 		31F705482858518000729831 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F705472858518000729831 /* AppDelegate.swift */; };
 		31F7054A2858518000729831 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F705492858518000729831 /* SceneDelegate.swift */; };
 		31F7054C2858518000729831 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F7054B2858518000729831 /* ViewController.swift */; };
@@ -39,7 +45,13 @@
 
 /* Begin PBXFileReference section */
 		314E93762859DB0B00FC98CC /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
-		31667B6128588BE800B7AB2E /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
+		31E8C616286ACCB800D36889 /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
+		31E8C618286ACD9000D36889 /* Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shape.swift; sourceTree = "<group>"; };
+		31E8C61A286AD34D00D36889 /* ShapeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeFactory.swift; sourceTree = "<group>"; };
+		31E8C61D286AD4D300D36889 /* LineFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineFactory.swift; sourceTree = "<group>"; };
+		31E8C61F286AD51400D36889 /* RectangleFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RectangleFactory.swift; sourceTree = "<group>"; };
+		31E8C621286AD64900D36889 /* TriangleFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriangleFactory.swift; sourceTree = "<group>"; };
+		31E8C623286AD70E00D36889 /* CircleFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleFactory.swift; sourceTree = "<group>"; };
 		31F705442858518000729831 /* PaintApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaintApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		31F705472858518000729831 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		31F705492858518000729831 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,10 +95,24 @@
 		31667B6028588B9800B7AB2E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				31F7054D2858518000729831 /* Main.storyboard */,
+				31F705522858518100729831 /* LaunchScreen.storyboard */,
 				31F705472858518000729831 /* AppDelegate.swift */,
 				31F705492858518000729831 /* SceneDelegate.swift */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		31E8C61C286AD35100D36889 /* ShapeFactory */ = {
+			isa = PBXGroup;
+			children = (
+				31E8C61A286AD34D00D36889 /* ShapeFactory.swift */,
+				31E8C61D286AD4D300D36889 /* LineFactory.swift */,
+				31E8C61F286AD51400D36889 /* RectangleFactory.swift */,
+				31E8C621286AD64900D36889 /* TriangleFactory.swift */,
+				31E8C623286AD70E00D36889 /* CircleFactory.swift */,
+			);
+			path = ShapeFactory;
 			sourceTree = "<group>";
 		};
 		31F7053B2858518000729831 = {
@@ -113,12 +139,12 @@
 			isa = PBXGroup;
 			children = (
 				31667B6028588B9800B7AB2E /* Supporting Files */,
-				31F7054B2858518000729831 /* ViewController.swift */,
+				31E8C61C286AD35100D36889 /* ShapeFactory */,
 				314E93762859DB0B00FC98CC /* CanvasView.swift */,
-				31667B6128588BE800B7AB2E /* ColorCell.swift */,
-				31F7054D2858518000729831 /* Main.storyboard */,
+				31F7054B2858518000729831 /* ViewController.swift */,
+				31E8C618286ACD9000D36889 /* Shape.swift */,
+				31E8C616286ACCB800D36889 /* ColorCell.swift */,
 				31F705502858518100729831 /* Assets.xcassets */,
-				31F705522858518100729831 /* LaunchScreen.storyboard */,
 				31F705552858518100729831 /* Info.plist */,
 			);
 			path = PaintApp;
@@ -273,10 +299,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				31F7054C2858518000729831 /* ViewController.swift in Sources */,
-				31667B6228588BE800B7AB2E /* ColorCell.swift in Sources */,
+				31E8C619286ACD9000D36889 /* Shape.swift in Sources */,
 				314E93772859DB0B00FC98CC /* CanvasView.swift in Sources */,
+				31E8C624286AD70E00D36889 /* CircleFactory.swift in Sources */,
 				31F705482858518000729831 /* AppDelegate.swift in Sources */,
+				31E8C61E286AD4D300D36889 /* LineFactory.swift in Sources */,
+				31E8C620286AD51400D36889 /* RectangleFactory.swift in Sources */,
+				31E8C617286ACCB800D36889 /* ColorCell.swift in Sources */,
 				31F7054A2858518000729831 /* SceneDelegate.swift in Sources */,
+				31E8C622286AD64900D36889 /* TriangleFactory.swift in Sources */,
+				31E8C61B286AD34D00D36889 /* ShapeFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

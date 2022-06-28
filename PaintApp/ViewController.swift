@@ -9,18 +9,18 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    var colors: [UIColor] = [.blue, .purple, .red, .green, .yellow, .brown, .gray]
+    private let colors: [UIColor] = [.blue, .purple, .red, .green, .yellow, .brown, .gray]
     
-    var circleButton = UIButton()
-    var triangleButton = UIButton()
-    var lineButton = UIButton()
-    var rectangleButton = UIButton()
-    var pencilButton = UIButton()
-    var fillLabel = UILabel()
-    var fillSwitch = UISwitch()
-    var undoButton = UIButton()
+    private let circleButton = UIButton()
+    private let triangleButton = UIButton()
+    private let lineButton = UIButton()
+    private let rectangleButton = UIButton()
+    private let pencilButton = UIButton()
+    private let fillLabel = UILabel()
+    private let fillSwitch = UISwitch()
+    private let undoButton = UIButton()
     
-    var stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stack = UIStackView()
         stack.backgroundColor = .white
         stack.axis = .horizontal
@@ -30,7 +30,7 @@ class ViewController: UIViewController {
         return stack
     }()
 
-    var colorsCollectionView: UICollectionView = {
+    private let colorsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 25, height: 40)
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
         return collection
     }()
     
-    var canvasView = CanvasView()
+    private let canvasView = CanvasView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,35 +49,23 @@ class ViewController: UIViewController {
         configureCanvasView()
     }
     
-    @objc func undoButtonTapped() {
-        canvasView.undoDraw()
+    @objc private func buttonTapped(_ sender: UIButton) {
+        switch sender.titleLabel?.text {
+        case "circle": canvasView.shapeType = .circle
+        case "rectangle": canvasView.shapeType = .rectangle
+        case "line": canvasView.shapeType = .line
+        case "triangle": canvasView.shapeType = .triangle
+        case "pencil": canvasView.shapeType = .pencil
+        case "undo": canvasView.undoDraw()
+        default: return
+        }
     }
     
-    @objc func longPress(gesture: UILongPressGestureRecognizer) {
+    @objc private func longPress(gesture: UILongPressGestureRecognizer) {
         canvasView.clearCanvasView()
     }
-    
-    @objc func lineButtonTapped() {
-        canvasView.method = .line
-    }
-    
-    @objc func pencilButtonTapped() {
-        canvasView.method = .pencil
-    }
-    
-    @objc func circleButtonTapped() {
-        canvasView.method = .circle
-    }
-    
-    @objc func triangleButtonTapped() {
-        canvasView.method = .triangle
-    }
-    
-    @objc func rectangleButtonTapped() {
-        canvasView.method = .rectangle
-    }
-    
-    @objc func switchChanged() {
+
+    @objc private func switchChanged() {
         if fillSwitch.isOn {
             canvasView.isFilled = true
         }
@@ -86,7 +74,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func configureCanvasView() {
+    private func configureCanvasView() {
         view.addSubview(canvasView)
         canvasView.backgroundColor = UIColor(named: "background")
         canvasView.translatesAutoresizingMaskIntoConstraints = false
@@ -96,7 +84,7 @@ class ViewController: UIViewController {
         canvasView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
     
-    func configureStackView() {
+    private func configureStackView() {
         view.addSubview(stackView)
         setStackViewConstraints()
         
@@ -111,7 +99,7 @@ class ViewController: UIViewController {
         configureUndoButton()
     }
     
-    func setStackViewConstraints() {
+    private func setStackViewConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
@@ -119,12 +107,12 @@ class ViewController: UIViewController {
         stackView.heightAnchor.constraint(equalToConstant: 100).isActive = true
     }
     
-    func configureSwitch() {
+    private func configureSwitch() {
         stackView.addArrangedSubview(fillSwitch)
         fillSwitch.addTarget(self, action: #selector(switchChanged), for: UIControl.Event.valueChanged)
     }
     
-    func configureColorsCollectionView() {
+    private func configureColorsCollectionView() {
         colorsCollectionView.dataSource = self
         colorsCollectionView.delegate = self
         
@@ -136,77 +124,79 @@ class ViewController: UIViewController {
         colorsCollectionView.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
-    func configureFillLabel() {
+    private func configureFillLabel() {
         stackView.addArrangedSubview(fillLabel)
         fillLabel.text = "Fill"
     }
     
-    func configureCircleButton() {
+    private func configureCircleButton() {
         stackView.addArrangedSubview(circleButton)
         circleButton.setImage(UIImage(named: "circle.png"), for: .normal)
         circleButton.translatesAutoresizingMaskIntoConstraints = false
         circleButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         circleButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         circleButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        
-        circleButton.addTarget(self, action: #selector(circleButtonTapped), for: .touchUpInside)
+        circleButton.titleLabel?.text = "circle"
+        circleButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    func configureRectangleButton() {
+    private func configureRectangleButton() {
         stackView.addArrangedSubview(rectangleButton)
         rectangleButton.setImage(UIImage(named: "rectangle.png"), for: .normal)
         rectangleButton.translatesAutoresizingMaskIntoConstraints = false
         rectangleButton.widthAnchor.constraint(equalTo: circleButton.widthAnchor).isActive = true
         rectangleButton.heightAnchor.constraint(equalTo: circleButton.heightAnchor).isActive = true
-        
-        rectangleButton.addTarget(self, action: #selector(rectangleButtonTapped), for: .touchUpInside)
+        rectangleButton.titleLabel?.text = "rectangle"
+        rectangleButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    func configureLineButton() {
+    private func configureLineButton() {
         stackView.addArrangedSubview(lineButton)
         lineButton.setImage(UIImage(named: "line.png"), for: .normal)
         lineButton.translatesAutoresizingMaskIntoConstraints = false
         lineButton.widthAnchor.constraint(equalTo: circleButton.widthAnchor).isActive = true
         lineButton.heightAnchor.constraint(equalTo: circleButton.heightAnchor).isActive = true
-        
-        lineButton.addTarget(self, action: #selector(lineButtonTapped), for: .touchUpInside)
+        lineButton.titleLabel?.text = "line"
+        lineButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    func configureTriangleButton() {
+    private func configureTriangleButton() {
         stackView.addArrangedSubview(triangleButton)
         triangleButton.setImage(UIImage(named: "triangle.png"), for: .normal)
         triangleButton.translatesAutoresizingMaskIntoConstraints = false
         triangleButton.widthAnchor.constraint(equalTo: circleButton.widthAnchor).isActive = true
         triangleButton.heightAnchor.constraint(equalTo: circleButton.heightAnchor).isActive = true
-        
-        triangleButton.addTarget(self, action: #selector(triangleButtonTapped), for: .touchUpInside)
+        triangleButton.titleLabel?.text = "triangle"
+        triangleButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    func configurePencilButton() {
+    private func configurePencilButton() {
         stackView.addArrangedSubview(pencilButton)
         pencilButton.setImage(UIImage(named: "pen.png"), for: .normal)
         pencilButton.translatesAutoresizingMaskIntoConstraints = false
         pencilButton.widthAnchor.constraint(equalTo: circleButton.widthAnchor).isActive = true
         pencilButton.heightAnchor.constraint(equalTo: circleButton.heightAnchor).isActive = true
-        
-        pencilButton.addTarget(self, action: #selector(pencilButtonTapped), for: .touchUpInside)
+        pencilButton.titleLabel?.text = "pencil"
+        pencilButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
-    func configureUndoButton() {
+    private func configureUndoButton() {
         stackView.addArrangedSubview(undoButton)
         undoButton.setImage(UIImage(named: "undo.png"), for: .normal)
         undoButton.translatesAutoresizingMaskIntoConstraints = false
         undoButton.widthAnchor.constraint(equalTo: circleButton.widthAnchor).isActive = true
         undoButton.heightAnchor.constraint(equalTo: circleButton.heightAnchor).isActive = true
         undoButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        
-        undoButton.addTarget(self, action: #selector(undoButtonTapped), for: .touchUpInside)
+        undoButton.titleLabel?.text = "undo"
+        undoButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.longPress(gesture:)))
         longPress.minimumPressDuration = 0.5
         undoButton.addGestureRecognizer(longPress)
     }
 }
+
+// MARK: - UICollectionView delegates
 
 extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
