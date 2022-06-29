@@ -62,7 +62,10 @@ class ViewController: UIViewController {
     }
     
     @objc private func longPress(gesture: UILongPressGestureRecognizer) {
-        canvasView.clearCanvasView()
+        if gesture.state != UIGestureRecognizer.State.ended {
+            canvasView.redoDraw()
+        }
+        if gesture.state != UIGestureRecognizer.State.began { return }
     }
 
     @objc private func switchChanged() {

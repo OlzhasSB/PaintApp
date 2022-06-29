@@ -7,66 +7,142 @@
 
 import UIKit
 
+// MARK: - Momento
+
 protocol Memento {
     var shapes: [ShapeViewModel] { get }
 }
 
-final class PainterMemento: Memento {
-    private(set) var shapes: [ShapeViewModel]
-    
+class PainterMemento: Memento {
+    var shapes: [ShapeViewModel]
+
     init(shapes: [ShapeViewModel]) {
         self.shapes = shapes
     }
 }
 
-final class Caretaker {
+//
+//class PainterManager {
+//    static let shared = PainterManager()
+//
+//    var shapes = [ShapeViewModel]()
+//
+//    func save() -> PainterMemento {
+//        return PainterMemento(shapes: self.shapes)
+//    }
+//
+//    func load(state: PainterMemento) {
+//        self.shapes = state.shapes
+//    }
+//
+//    func printShapes(in view: UIView) {
+//        for v in view.layer.sublayers! {
+//            v.removeFromSuperlayer()
+//        }
+//        for shape in shapes {
+//            let path = UIBezierPath()
+//            path.move(to: )
+//            path.addLine(to: )
+//            drawShapeLayer()
+//        }
+//
+//
+//    }
+//    private func drawShapeLayer() {
+//
+//    }
+//}
+//
+//class CarrierState {
+//    var state: PainterMemento?
+//    var painterManager: PainterManager
+//
+//    init(painterManager: PainterManager) {
+//        self.painterManager = painterManager
+//    }
+//
+//    public func saveShape() {
+//        state = painterManager.save()
+//    }
+//
+//    func loadShape() {
+//        guard state != nil else { return }
+//        painterManager.load(state: state!)
+//    }
+//}
+//
+
+
+// MARK: - Caretaker
+
+class Caretaker {
+    
     var states: [Memento] = []
     var currentIndex: Int = 0
     var painter: CanvasView
-    
+
     init(painter: CanvasView) {
         self.painter = painter
     }
-    
+
     func save() {
-        let tail =  states.count - 1 - currentIndex
-        if tail > 0 { states.removeLast(tail) }
-        
+//        let tail =  states.count - 1 - currentIndex
+//        if tail > 0 { states.removeLast(tail) }
+//
+//        states.append(painter.saveState())
+//        currentIndex = states.count - 1
+//        print("Save. \(painter.description)")
+
         states.append(painter.saveState())
-        currentIndex = states.count - 1
-        print("Save. \(painter.description)")
+        currentIndex += 1
+        print("Save. \(currentIndex)")
     }
-    
+
     func undo(steps: Int) {
-        guard steps <= currentIndex else { return }
-        currentIndex -= steps
+//        guard steps <= currentIndex else { return }
+//        currentIndex -= steps
+//        painter.restore(state: states[currentIndex])
+//        print("Undo \(steps) steps. \(painter.description)")
+        
+        if currentIndex <= 0 || states.isEmpty { return }
+        currentIndex -= 1
         painter.restore(state: states[currentIndex])
-        print("Undo \(steps) steps. \(painter.description)")
+        print("Undo. \(currentIndex)")
     }
-    
+
     func redo(steps: Int) {
-        let newIndex = currentIndex + steps
-        guard newIndex < states.count - 1 else { return }
-        currentIndex = newIndex
+//        let newIndex = currentIndex + steps
+//        guard newIndex < states.count - 1 else { return }
+//        currentIndex = newIndex
+//        painter.restore(state: states[currentIndex])
+//        print("Redo \(steps) steps. \(painter.description)")
+        
+        if currentIndex == states.count - 1 { return }
+        currentIndex += 1
         painter.restore(state: states[currentIndex])
-        print("Redo \(steps) steps. \(painter.description)")
+        print("Redo. \(currentIndex)")
     }
 }
 
+// MARK: - Originator
+
 class CanvasView: UIView {
-    
-    func saveState() -> Memento {
-        return PainterMemento(shapes: shapes)
-    }
-    
-    func restore(state: Memento) {
-        shapes = state.shapes
-    }
-    
+
     private var shapes = [ShapeViewModel]()
     var strokeColor: UIColor = .black
     var shapeType: ShapeType = .pencil
     var isFilled: Bool = false
+    
+    lazy var caretaker = Caretaker(painter: self)
+    
+    func saveState() -> Memento {
+        return PainterMemento(shapes: shapes)
+    }
+
+    func restore(state: Memento) {
+        shapes = state.shapes
+        setNeedsDisplay()
+    }
     
     override func draw(_ rect: CGRect) {
         shapes.forEach { shape in
@@ -96,6 +172,7 @@ class CanvasView: UIView {
             isFilled: isFilled
         )
         shapes.append(viewModel)
+        caretaker.save()
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -113,15 +190,18 @@ class CanvasView: UIView {
         setNeedsDisplay()
     }
     
-    func clearCanvasView() {
-        shapes.removeAll()
+    func redoDraw() {
+//        shapes.removeAll()
+        caretaker.redo(steps: 1)
         setNeedsDisplay()
     }
     
     func undoDraw() {
-        if shapes.count > 0 {
-            shapes.removeLast()
+//        if shapes.count > 0 {
+//            shapes.removeLast()
+            
+            caretaker.undo(steps: 1)
             setNeedsDisplay()
-        }
+//        }
     }
 }
